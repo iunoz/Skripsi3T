@@ -1,0 +1,344 @@
+/* ===== Navbar ===== */
+
+/* Header putih dengan garis bawah, di atas latar halaman yang abu-abu */
+[data-testid="stHeader"] {
+    background: #FFFFFF;
+    border-bottom: 1px solid #E7E5E4;
+}
+
+/* Logo di kiri, menu di kanan */
+[data-testid="stToolbar"] > div {
+    flex: 1;
+    width: 100%;
+}
+[data-testid="stTopNav"] {
+    margin-left: auto;
+    justify-content: flex-end;
+}
+
+/* Lebar konten dibatasi agar tidak terlalu melebar di layar besar */
+[data-testid="stMainBlockContainer"] {
+    max-width: 1500px;
+    padding-top: 5rem;
+}
+
+
+/* ===== Beranda ===== */
+
+/* Garis vertikal pemisah judul dan teks */
+.st-key-garis_kiri {
+    border-left: 3px solid #8B5E3C;
+    padding-left: 2rem;
+}
+.st-key-garis_kanan {
+    border-right: 3px solid #8B5E3C;
+    padding-right: 2rem;
+}
+
+/* Kartu daerah 3T dan kartu navigasi modul */
+[class*="st-key-kartu_3t_"],
+[class*="st-key-kartu_modul_"] {
+    background: #FFFFFF;
+    border: 1px solid #E7E5E4;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+[class*="st-key-kartu_3t_"] {
+    padding: 0.5rem 0.75rem;
+}
+/* Pembungkus kartu 3T ikut memanjang agar ketiga kartu sama tinggi */
+[data-testid="stLayoutWrapper"]:has(> [class*="st-key-kartu_3t_"]) {
+    flex: 1 1 auto;
+}
+
+/* Kartu modul: label tebal di tengah. Padding diletakkan di link agar seluruh kartu bisa diklik */
+[class*="st-key-kartu_modul_"] {
+    margin-top: 1.5rem;
+    padding: 0;
+}
+[class*="st-key-kartu_modul_"] a {
+    justify-content: center;
+    padding: 1.5rem 1rem;
+    border-radius: 12px;
+}
+/* Hilangkan latar abu-abu bawaan page_link saat hover */
+[class*="st-key-kartu_modul_"] a:hover,
+[class*="st-key-kartu_modul_"] a:focus {
+    background: transparent;
+}
+[class*="st-key-kartu_modul_"] a p {
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+[class*="st-key-kartu_modul_"]:hover {
+    border-color: #8B5E3C;
+}
+
+
+/* ===== Tentang Program ===== */
+
+/* Judul halaman: hapus jarak atas-bawah bawaan Streamlit pada h1
+   agar judul sejajar dengan tombol pilihan di sebelah kanannya */
+.st-key-judul_tentang h1 {
+    padding: 0;
+}
+
+/* Dua kartu penjelasan model: latar putih, sudut membulat */
+.st-key-kartu_tentang_model,
+.st-key-kartu_cara_kerja_model {
+    background: #FFFFFF;
+    border: 1px solid #E7E5E4;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+}
+
+/* Agar kedua kartu sama tinggi walaupun panjang teksnya berbeda */
+[data-testid="stLayoutWrapper"]:has(> .st-key-kartu_tentang_model),
+[data-testid="stLayoutWrapper"]:has(> .st-key-kartu_cara_kerja_model) {
+    flex: 1;
+}
+
+/* Garis bawah coklat di bawah judul kartu (h4 = judul dari "####") */
+.st-key-kartu_tentang_model h4,
+.st-key-kartu_cara_kerja_model h4 {
+    display: inline-block;
+    padding-bottom: 0.4rem;
+    border-bottom: 2px solid #8B5E3C;
+    margin-bottom: 1rem;  /* jarak antara garis dan teks di bawahnya */
+}
+
+/* FAQ: setiap pertanyaan berupa kotak putih */
+.st-key-faq details {
+    background: #FFFFFF;
+    border: 1px solid #E7E5E4;
+    border-radius: 12px;
+}
+
+/* Pertanyaan FAQ ditulis tebal */
+.st-key-faq summary p {
+    font-weight: 600;
+}
+
+/* Panah buka/tutup FAQ berwarna coklat */
+.st-key-faq summary svg,
+.st-key-faq summary [data-testid="stIconMaterial"] {
+    color: #8B5E3C;
+}
+
+/* Kartu daftar daerah 3T dan kartu sumber data: latar putih, sudut membulat */
+.st-key-kartu_daftar_3t,
+.st-key-kartu_sumber_data {
+    background: #FFFFFF;
+    border: 1px solid #E7E5E4;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+}
+
+
+/* ===== Prediksi ===== */
+
+/* Kartu input variabel, kartu hasil prediksi, dan kartu kontribusi: latar putih, sudut membulat */
+.st-key-kartu_variabel,
+.st-key-kartu_hasil_prediksi,
+.st-key-kartu_kontribusi {
+    background: #FFFFFF;
+    border: 1px solid #E7E5E4;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+}
+
+/* Kartu input variabel ikut memanjang agar sama tinggi dengan kolom kanan */
+[data-testid="stLayoutWrapper"]:has(> .st-key-kartu_variabel) {
+    flex: 1;
+}
+
+/* Kartu kontribusi mengisi sisa tinggi kolom kanan */
+[data-testid="stLayoutWrapper"]:has(> .st-key-kartu_kontribusi),
+.st-key-kartu_kontribusi {
+    flex: 1;
+}
+
+/* Garis tipis di bawah setiap blok variabel, seperti petak-petak */
+.st-key-blok_RLS,
+.st-key-blok_HLS,
+.st-key-blok_log_PDRB_Kapita,
+.st-key-blok_UMK,
+.st-key-blok_Pengeluaran_Kapita,
+.st-key-blok_TPAK,
+.st-key-blok_log_Kepadatan_Penduduk,
+.st-key-blok_log_Jumlah_Penduduk,
+.st-key-blok_log_Penduduk_Miskin {
+    border-bottom: 1px solid #F0EEEC;
+    padding: 1rem 0 0.5rem 0;
+}
+
+/* Bagian variabel tereliminasi: latar abu-abu muda di bagian bawah kartu */
+.st-key-bagian_tereliminasi {
+    background: #FAFAF9;
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    margin-top: auto;  /* dorong ke bagian paling bawah kartu */
+}
+.st-key-bagian_tereliminasi p {
+    font-size: 0.8rem;
+}
+
+/* Kartu hasil prediksi: judul abu-abu tua, angka prediksi sangat besar */
+.st-key-kartu_hasil_prediksi {
+    padding: 2rem 1.5rem;
+}
+.st-key-kartu_hasil_prediksi p {
+    color: #57534E;
+    letter-spacing: 0.05em;
+}
+.st-key-kartu_hasil_prediksi h1 {
+    font-size: 4.5rem;
+    padding: 0.5rem 0 0 0;
+}
+
+/* Teks daftar kontribusi dibuat sedikit lebih kecil */
+.st-key-kartu_kontribusi p {
+    font-size: 0.875rem;
+}
+
+
+/* ===== Peta ===== */
+
+/* Kartu peta dan dua kartu daftar TPT: latar putih, sudut membulat */
+.st-key-kartu_peta,
+.st-key-kartu_tpt_tertinggi,
+.st-key-kartu_tpt_terendah {
+    background: #FFFFFF;
+    border: 1px solid #E7E5E4;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+}
+
+/* Kartu peta ikut memanjang agar sama tinggi dengan kolom kanan */
+[data-testid="stLayoutWrapper"]:has(> .st-key-kartu_peta) {
+    flex: 1;
+}
+
+/* Tinggi minimum peta, agar tidak terlalu pendek saat kolom ditumpuk di layar kecil.
+   data-testid dipakai karena bagian dalam st.pydeck_chart tidak bisa diberi key sendiri */
+.st-key-kartu_peta [data-testid="stDeckGlJsonChart"] {
+    min-height: 450px;
+}
+
+/* Garis tipis di atas keterangan warna, memisahkan dari peta.
+   margin-top: auto mendorong keterangan ke bagian paling bawah kartu */
+[data-testid="stLayoutWrapper"]:has(> .st-key-legenda_peta),
+.st-key-legenda_peta {
+    margin-top: auto;
+}
+.st-key-legenda_peta {
+    border-top: 1px solid #E7E5E4;
+    padding-top: 0.75rem;
+}
+
+/* Kotak dropdown periode berlatar putih dengan garis tepi tipis.
+   Kotak ini adalah div pembungkus input (div:has(> input)), karena bagian
+   dalam selectbox tidak bisa diberi key sendiri */
+.st-key-pilih_periode div:has(> input) {
+    background: #FFFFFF;
+    border: 1px solid #E7E5E4;
+    border-radius: 12px;
+}
+
+/* Daftar pilihan yang muncul saat dropdown dibuka berlatar putih.
+   Daftar ini ditampilkan di luar .st-key-pilih_periode, jadi harus memakai data-testid
+   (aturan ini juga berlaku untuk selectbox lain di aplikasi) */
+[data-testid="stSelectboxVirtualDropdown"],
+[data-testid="stSelectboxVirtualDropdown"] [role="listbox"] {
+    background: #FFFFFF;
+}
+
+/* Tahun yang dipilih ditampilkan di tengah kotak dropdown.
+   padding-left mengimbangi lebar tombol panah di kanan agar benar-benar di tengah */
+.st-key-pilih_periode input {
+    background: transparent;
+    text-align: center;
+    padding-left: 2rem;
+}
+
+/* Lingkaran kecil di depan setiap teks keterangan */
+.st-key-legenda_rendah p::before,
+.st-key-legenda_sedang p::before,
+.st-key-legenda_tinggi p::before,
+.st-key-legenda_bukan_3t p::before {
+    content: "";
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;           /* membuat kotak menjadi lingkaran */
+    margin-right: 0.4rem;         /* jarak antara lingkaran dan teks */
+    vertical-align: -1px;         /* sejajarkan lingkaran dengan teks */
+}
+
+/* Warna lingkaran keterangan, sama dengan warna wilayah di peta */
+.st-key-legenda_rendah p::before {
+    background: #3E9E5B;
+}
+.st-key-legenda_sedang p::before {
+    background: #F2C230;
+}
+.st-key-legenda_tinggi p::before {
+    background: #D9483B;
+}
+.st-key-legenda_bukan_3t p::before {
+    background: #D9D2C5;
+}
+
+/* Nilai TPT di kartu tertinggi berwarna merah, di kartu terendah berwarna hijau */
+.st-key-kartu_tpt_tertinggi strong {
+    color: #C0392B;
+}
+.st-key-kartu_tpt_terendah strong {
+    color: #2E7D46;
+}
+
+/* Teks daftar lima TPT dibuat sedikit lebih kecil agar nama panjang muat satu baris */
+.st-key-kartu_tpt_tertinggi p,
+.st-key-kartu_tpt_terendah p {
+    font-size: 0.875rem;
+}
+
+
+/* ===== Evaluasi ===== */
+
+/* Empat kartu metrik, kartu kurva, dan kartu koefisien: latar putih, sudut membulat */
+.st-key-kartu_r2,
+.st-key-kartu_rmse,
+.st-key-kartu_mae,
+.st-key-kartu_lambda,
+.st-key-kartu_validasi_silang,
+.st-key-kartu_koefisien {
+    background: #FFFFFF;
+    border: 1px solid #E7E5E4;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+}
+
+/* Judul kartu metrik berwarna abu-abu tua */
+.st-key-kartu_r2 p,
+.st-key-kartu_rmse p,
+.st-key-kartu_mae p,
+.st-key-kartu_lambda p {
+    color: #57534E;
+}
+
+/* Angka metrik dibuat besar */
+.st-key-kartu_r2 h2,
+.st-key-kartu_rmse h2,
+.st-key-kartu_mae h2,
+.st-key-kartu_lambda h2 {
+    font-size: 2.5rem;
+    padding: 0.25rem 0;
+}
+
+/* Kartu kurva dan kartu koefisien ikut memanjang agar sama tinggi */
+[data-testid="stLayoutWrapper"]:has(> .st-key-kartu_validasi_silang),
+[data-testid="stLayoutWrapper"]:has(> .st-key-kartu_koefisien) {
+    flex: 1;
+}
+
