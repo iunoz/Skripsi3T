@@ -25,19 +25,39 @@
 
 /* ===== Beranda ===== */
 
-/* Garis vertikal pemisah judul dan teks */
-.st-key-garis_kiri {
-    border-left: 3px solid #8B5E3C;
-    padding-left: 2rem;
+/* Judul "Latar Belakang" diberi garis bawah cokelat (h3 = judul dari "###") */
+.st-key-latar_belakang h3 {
+    display: inline-block;
+    padding-bottom: 0.4rem;
+    border-bottom: 3px solid #8B5E3C;
+    margin-bottom: 0.75rem;  /* jarak antara garis dan teks di bawahnya */
 }
+
+.st-key-gambaran h3 {
+    display: inline-block;
+    padding-bottom: 0.4rem;
+    border-bottom: 3px solid #8B5E3C;
+    margin-bottom: 0.75rem;  /* jarak antara garis dan teks di bawahnya */
+}
+
+/* Kartu grafik rata-rata TPT: latar putih, sudut membulat, garis cokelat di bagian atas */
+.st-key-kartu_grafik_tpt {
+    background: #FFFFFF;
+    border: 1px solid #E7E5E4;
+    border-top: 4px solid #8B5E3C;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    padding: 1.25rem 1.5rem 0.75rem 1.5rem;
+}
+
+/* Garis vertikal pemisah judul dan teks */
 .st-key-garis_kanan {
     border-right: 3px solid #8B5E3C;
     padding-right: 2rem;
 }
 
-/* Kartu daerah 3T dan kartu navigasi modul */
-[class*="st-key-kartu_3t_"],
-[class*="st-key-kartu_modul_"] {
+/* Kartu daerah 3T */
+[class*="st-key-kartu_3t_"] {
     background: #FFFFFF;
     border: 1px solid #E7E5E4;
     border-radius: 12px;
@@ -46,32 +66,138 @@
 [class*="st-key-kartu_3t_"] {
     padding: 0.5rem 0.75rem;
 }
+
+/* Kartu daerah 3T */
+.st-key-kartu_3t_tertinggal,
+.st-key-kartu_3t_terdepan,
+.st-key-kartu_3t_terluar {
+    border-top: 4px solid #8B5E3C;
+    padding: 1rem 1.5rem 1.25rem 1.5rem;
+}
 /* Pembungkus kartu 3T ikut memanjang agar ketiga kartu sama tinggi */
 [data-testid="stLayoutWrapper"]:has(> [class*="st-key-kartu_3t_"]) {
     flex: 1 1 auto;
 }
 
-/* Kartu modul: label tebal di tengah. Padding diletakkan di link agar seluruh kartu bisa diklik */
-[class*="st-key-kartu_modul_"] {
-    margin-top: 1.5rem;
-    padding: 0;
-}
-[class*="st-key-kartu_modul_"] a {
-    justify-content: center;
-    padding: 1.5rem 1rem;
+/* Kartu modul */
+.st-key-kartu_modul_prediksi,
+.st-key-kartu_modul_evaluasi,
+.st-key-kartu_modul_peta,
+.st-key-kartu_modul_tentang {
+    position: relative;   /* acuan posisi untuk link yang menutupi seluruh kartu*/
+    background: #FFFFFF;
+    border: 1px solid #E7E5E4;
     border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    padding: 1.5rem;
+    margin-top: 1.5rem;   /* jarak dari judul "Modul Aplikasi" */
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;  /* efek hover dibuat halus */
 }
-/* Hilangkan latar abu-abu bawaan page_link saat hover */
-[class*="st-key-kartu_modul_"] a:hover,
-[class*="st-key-kartu_modul_"] a:focus {
+
+/* Kartu modul naik sedikit, bayangan lebih tebal, dan garis tepi cokelat saat disorot mouse */
+.st-key-kartu_modul_prediksi:hover,
+.st-key-kartu_modul_evaluasi:hover,
+.st-key-kartu_modul_peta:hover,
+.st-key-kartu_modul_tentang:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    border-color: #8B5E3C;
+}
+
+/* Pembungkus kartu modul ikut memanjang agar keempat kartu sama tinggi */
+[data-testid="stLayoutWrapper"]:has(> .st-key-kartu_modul_prediksi),
+[data-testid="stLayoutWrapper"]:has(> .st-key-kartu_modul_evaluasi),
+[data-testid="stLayoutWrapper"]:has(> .st-key-kartu_modul_peta),
+[data-testid="stLayoutWrapper"]:has(> .st-key-kartu_modul_tentang) {
+    flex: 1;
+}
+
+/* Ikon kartu modul: kotak cokelat gelap dengan ikon putih.
+   p > span adalah ikon yang dibuat st.markdown(":material/...:").
+   Streamlit menulis display: inline-block langsung pada span ini, jadi ikon
+   ditengahkan dengan text-align dan line-height, bukan dengan flex */
+.st-key-ikon_modul_prediksi p > span,
+.st-key-ikon_modul_evaluasi p > span,
+.st-key-ikon_modul_peta p > span,
+.st-key-ikon_modul_tentang p > span {
+    width: 2.75rem;           /* ukuran kotak dibuat tetap agar tidak gepeng */
+    height: 2.75rem;
+    line-height: 2.75rem;     /* sama dengan tinggi kotak, agar ikon di tengah (atas-bawah) */
+    text-align: center;       /* ikon di tengah kotak (kiri-kanan) */
+    background: #6F4A2F;
+    color: #FFFFFF;
+    font-size: 1.4rem;
+    border-radius: 10px;
+}
+
+/* Teks penjelasan kartu modul berwarna abu-abu dan sedikit lebih kecil */
+.st-key-kartu_modul_prediksi p,
+.st-key-kartu_modul_evaluasi p,
+.st-key-kartu_modul_peta p,
+.st-key-kartu_modul_tentang p {
+    color: #57534E;
+    font-size: 0.9rem;
+}
+
+/* Link "Buka ... →" didorong ke bagian paling bawah kartu,
+   agar posisinya sejajar di keempat kartu walaupun panjang teksnya berbeda */
+[data-testid="stLayoutWrapper"]:has(> .st-key-tautan_modul_prediksi),
+[data-testid="stLayoutWrapper"]:has(> .st-key-tautan_modul_evaluasi),
+[data-testid="stLayoutWrapper"]:has(> .st-key-tautan_modul_peta),
+[data-testid="stLayoutWrapper"]:has(> .st-key-tautan_modul_tentang),
+.st-key-tautan_modul_prediksi,
+.st-key-tautan_modul_evaluasi,
+.st-key-tautan_modul_peta,
+.st-key-tautan_modul_tentang {
+    margin-top: auto;
+}
+
+/* Link "Buka ... →": tanpa jarak kiri dan tanpa latar abu-abu bawaan page_link */
+.st-key-tautan_modul_prediksi a,
+.st-key-tautan_modul_evaluasi a,
+.st-key-tautan_modul_peta a,
+.st-key-tautan_modul_tentang a,
+.st-key-tautan_modul_prediksi a:hover,
+.st-key-tautan_modul_evaluasi a:hover,
+.st-key-tautan_modul_peta a:hover,
+.st-key-tautan_modul_tentang a:hover {
+    padding: 0;
     background: transparent;
 }
-[class*="st-key-kartu_modul_"] a p {
-    font-size: 1.05rem;
+
+/* Area klik link diperluas menutupi seluruh kartu, jadi kartu bisa diklik di mana saja */
+.st-key-tautan_modul_prediksi a::after,
+.st-key-tautan_modul_evaluasi a::after,
+.st-key-tautan_modul_peta a::after,
+.st-key-tautan_modul_tentang a::after {
+    content: "";
+    position: absolute;
+    inset: 0;             /* menempel ke keempat sisi kartu */
+}
+
+/* Tulisan link berwarna cokelat dan tebal */
+.st-key-tautan_modul_prediksi a p,
+.st-key-tautan_modul_evaluasi a p,
+.st-key-tautan_modul_peta a p,
+.st-key-tautan_modul_tentang a p {
+    color: #6F4A2F;
     font-weight: 600;
 }
-[class*="st-key-kartu_modul_"]:hover {
-    border-color: #8B5E3C;
+
+/* Ikon kartu daerah 3T
+   p > span adalah ikon yang dibuat st.markdown(":material/...:"),*/
+.st-key-ikon_3t_tertinggal p > span,
+.st-key-ikon_3t_terdepan p > span,
+.st-key-ikon_3t_terluar p > span {
+    width: 3.25rem;           /* ukuran kotak dibuat tetap agar tidak gepeng */
+    height: 3.25rem;
+    line-height: 3.25rem;     /* sama dengan tinggi kotak, agar ikon di tengah (atas-bawah) */
+    text-align: center;       /* ikon di tengah kotak (kiri-kanan) */
+    margin-top: 0.5rem;       /* jarak dari tepi atas kartu */
+    background: #EADBC8;
+    color: #8B5E3C;
+    font-size: 1.75rem;
+    border-radius: 12px;
 }
 
 

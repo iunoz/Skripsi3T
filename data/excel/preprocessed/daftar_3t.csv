@@ -1,0 +1,128 @@
+Kabupaten_Kota,Provinsi,Tertinggal,Terdepan,Terluar
+Aceh Timur,Aceh,0,1,0
+Aceh Besar,Aceh,0,1,1
+Pidie,Aceh,0,1,0
+Aceh Utara,Aceh,0,1,0
+Simeulue,Aceh,0,1,1
+Bireuen,Aceh,0,1,0
+Aceh Jaya,Aceh,0,0,1
+Pidie Jaya,Aceh,0,1,0
+Kota Sabang,Aceh,0,1,1
+Kota Lhokseumawe,Aceh,0,1,0
+Kota Langsa,Aceh,0,1,0
+Nias,Sumatera Utara,1,1,0
+Langkat,Sumatera Utara,0,1,0
+Asahan,Sumatera Utara,0,1,0
+Nias Selatan,Sumatera Utara,1,1,1
+Serdang Bedagai,Sumatera Utara,0,1,1
+Batu Bara,Sumatera Utara,0,1,0
+Nias Utara,Sumatera Utara,1,1,1
+Nias Barat,Sumatera Utara,1,1,0
+Kota Gunungsitoli,Sumatera Utara,0,1,0
+Kepulauan Mentawai,Sumatera Barat,1,1,1
+Bengkalis,Riau,0,1,1
+Rokan Hilir,Riau,0,1,1
+Kepulauan Meranti,Riau,0,1,1
+Kota Dumai,Riau,0,1,0
+Musi Rawas Utara,Sumatera Selatan,1,0,0
+Bengkulu Utara,Bengkulu,0,1,1
+Pesisir Barat,Lampung,1,0,1
+Bintan,Kepulauan Riau,0,1,1
+Karimun,Kepulauan Riau,0,1,1
+Natuna,Kepulauan Riau,0,1,1
+Kepulauan Anambas,Kepulauan Riau,0,1,1
+Kota Batam,Kepulauan Riau,0,1,1
+Tasikmalaya,Jawa Barat,0,0,1
+Cilacap,Jawa Tengah,0,0,1
+Trenggalek,Jawa Timur,0,0,1
+Jember,Jawa Timur,0,0,1
+Pandeglang,Banten,0,0,1
+Klungkung,Bali,0,1,1
+Lombok Barat,Nusa Tenggara Barat,0,0,1
+Lombok Utara,Nusa Tenggara Barat,1,0,0
+Kupang,Nusa Tenggara Timur,1,1,1
+Timor Tengah Selatan,Nusa Tenggara Timur,1,1,0
+Timor Tengah Utara,Nusa Tenggara Timur,0,1,0
+Belu,Nusa Tenggara Timur,1,1,0
+Alor,Nusa Tenggara Timur,1,1,1
+Sumba Timur,Nusa Tenggara Timur,1,1,1
+Sumba Barat,Nusa Tenggara Timur,1,1,0
+Lembata,Nusa Tenggara Timur,1,0,0
+Rote Ndao,Nusa Tenggara Timur,1,1,1
+Sumba Tengah,Nusa Tenggara Timur,1,0,0
+Sumba Barat Daya,Nusa Tenggara Timur,1,1,0
+Manggarai Timur,Nusa Tenggara Timur,1,0,0
+Sabu Raijua,Nusa Tenggara Timur,1,1,1
+Malaka,Nusa Tenggara Timur,1,1,0
+Sambas,Kalimantan Barat,0,1,0
+Sanggau,Kalimantan Barat,0,1,0
+Sintang,Kalimantan Barat,0,1,0
+Kapuas Hulu,Kalimantan Barat,0,1,0
+Bengkayang,Kalimantan Barat,0,1,0
+Berau,Kalimantan Timur,0,1,1
+Mahakam Ulu,Kalimantan Timur,0,1,0
+Malinau,Kalimantan Utara,0,1,0
+Nunukan,Kalimantan Utara,0,1,1
+Tana Tidung,Kalimantan Utara,0,1,0
+Bolaang Mongondow,Sulawesi Utara,0,1,0
+Kepulauan Sangihe,Sulawesi Utara,0,1,1
+Kepulauan Talaud,Sulawesi Utara,0,1,1
+Minahasa Selatan,Sulawesi Utara,0,1,0
+Minahasa Utara,Sulawesi Utara,0,1,1
+Bolaang Mongondow Utara,Sulawesi Utara,0,1,1
+Kepulauan Siau Tagulandang Biaro,Sulawesi Utara,0,1,1
+Donggala,Sulawesi Tengah,1,0,0
+Toli-Toli,Sulawesi Tengah,0,1,1
+Buol,Sulawesi Tengah,0,1,0
+Tojo Una-Una,Sulawesi Tengah,1,0,0
+Sigi,Sulawesi Tengah,1,0,0
+Gorontalo Utara,Gorontalo,0,1,0
+Maluku Tenggara,Maluku,0,1,1
+Kepulauan Tanimbar,Maluku,1,1,1
+Seram Bagian Timur,Maluku,1,0,0
+Seram Bagian Barat,Maluku,1,0,0
+Kepulauan Aru,Maluku,1,1,1
+Maluku Barat Daya,Maluku,1,1,1
+Buru Selatan,Maluku,1,0,0
+Kota Tual,Maluku,0,1,0
+Halmahera Tengah,Maluku Utara,0,1,1
+Kepulauan Sula,Maluku Utara,1,0,0
+Halmahera Timur,Maluku Utara,0,1,0
+Pulau Morotai,Maluku Utara,0,1,0
+Pulau Taliabu,Maluku Utara,1,0,0
+Merauke,Papua Selatan,0,1,1
+Jayawijaya,Papua Pegunungan,1,0,0
+Nabire,Papua Tengah,1,0,0
+Biak Numfor,Papua,0,1,0
+Puncak Jaya,Papua Tengah,1,0,0
+Paniai,Papua Tengah,1,0,0
+Mimika,Papua Tengah,0,1,1
+Sarmi,Papua,0,1,1
+Keerom,Papua,1,1,0
+Pegunungan Bintang,Papua Pegunungan,1,1,0
+Yahukimo,Papua Pegunungan,1,0,0
+Tolikara,Papua Pegunungan,1,0,0
+Waropen,Papua,1,0,0
+Boven Digoel,Papua Selatan,1,1,0
+Mappi,Papua Selatan,1,1,0
+Asmat,Papua Selatan,1,1,1
+Supiori,Papua,1,1,1
+Mamberamo Raya,Papua,1,1,0
+Mamberamo Tengah,Papua Pegunungan,1,0,0
+Yalimo,Papua Pegunungan,1,0,0
+Lanny Jaya,Papua Pegunungan,1,0,0
+Nduga,Papua Pegunungan,1,0,0
+Puncak,Papua Tengah,1,0,0
+Dogiyai,Papua Tengah,1,0,0
+Intan Jaya,Papua Tengah,1,0,0
+Deiyai,Papua Tengah,1,0,0
+Kota Jayapura,Papua,0,1,0
+Sorong,Papua Barat Daya,1,0,0
+Sorong Selatan,Papua Barat Daya,1,0,0
+Raja Ampat,Papua Barat Daya,0,1,1
+Teluk Bintuni,Papua Barat,1,0,0
+Teluk Wondama,Papua Barat,1,0,0
+Tambrauw,Papua Barat Daya,1,1,1
+Maybrat,Papua Barat Daya,1,0,0
+Manokwari Selatan,Papua Barat,1,0,0
+Pegunungan Arfak,Papua Barat,1,0,0

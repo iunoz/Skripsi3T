@@ -1,7 +1,7 @@
 import streamlit as st
 
 st.set_page_config(page_title="Prediksi TPT 3T", layout="wide")
-st.logo("assets/logo.svg", size="large")
+st.logo("assets/sigap_final_3t.svg", size="large")
 
 with open("assets/style.css", encoding="utf-8") as file:
     st.html(f"<style>{file.read()}</style>")

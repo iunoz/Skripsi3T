@@ -12,7 +12,7 @@ COLOR_MEDIUM = [242, 194, 48]
 COLOR_HIGH = [217, 72, 59]
 COLOR_NON_3T = [217, 210, 197]
 
-PERIOD_LIST = [2021, 2022, 2023, 2024, 2025]
+PERIOD_LIST = [2022, 2023, 2024, 2025]
 
 
 # teks peta
@@ -42,7 +42,7 @@ def format_percent(value):
 
 @st.cache_data  # kuartil cukup dihitung sekali
 def compute_quartiles(tpt_data):
-    # q1 dan q3 dihitung dari seluruh data TPT 2021–2025,
+    # q1 dan q3 dihitung dari seluruh data TPT 2022–2025,
     quartiles = {
         "q1": tpt_data["TPT"].quantile(0.25),
         "q3": tpt_data["TPT"].quantile(0.75),
@@ -161,7 +161,7 @@ with info_column:
     selected_period = st.selectbox(
         "Periode",
         options=PERIOD_LIST,
-        index=4,  # set ke periode terakhir (2025)
+        index=3,  # set ke periode terakhir (2025)
         key="pilih_periode",  # dipakai style.css untuk mengatur tampilan dropdown
     )
 
