@@ -1,9 +1,10 @@
 import json
+import os
 import pandas as pd
 import pydeck as pdk
 import streamlit as st
 
-from base import FILE_TPT_DATA, FILE_GEOJSON
+from base import FILE_TPT_DATA, FILE_GEOJSON, STATIC_FOLDER, STATIC_URL
 
 
 # rgb
@@ -98,12 +99,31 @@ def prepare_map_regions(tpt_by_region, quartiles):
     return {"type": "FeatureCollection", "features": region_list}
 
 
-def build_map(colored_geojson):
+@st.cache_data  # file peta setiap periode cukup dibuat sekali
+def save_map_file(selected_period, tpt_by_region, quartiles):
+    # peta berwarna disimpan ke folder static/ agar browser mengunduhnya sendiri,
+    # tidak dikirim ulang dari python setiap kali halaman dijalankan
+    colored_geojson = prepare_map_regions(tpt_by_region, quartiles)
+    file_name = "peta_tpt_" + str(selected_period) + ".json"
+
+    os.makedirs(STATIC_FOLDER, exist_ok=True)
+    with open(STATIC_FOLDER + "/" + file_name, "w", encoding="utf-8") as file:
+        json.dump(
+            colored_geojson,
+            file,
+            separators=(",", ":"),  # tanpa spasi agar ukuran file kecil
+        )
+
+    # alamat file yang dibaca browser, misalnya app/static/peta_tpt_2025.json
+    return STATIC_URL + "/" + file_name
+
+
+def build_map(map_file_url):
     region_layer = pdk.Layer(
         "GeoJsonLayer",
-        data=colored_geojson,
-        get_fill_color="properties.color",  
-        get_line_color=[255, 255, 255],     # garis batas wilayah 
+        data=map_file_url,                  # browser mengunduh file peta dari alamat ini
+        get_fill_color="properties.color",
+        get_line_color=[255, 255, 255],     # garis batas wilayah
         line_width_min_pixels=0.5,
         pickable=True,                      # wilayah dpt menampilkan tooltip
         auto_highlight=True,                # wilayah yang nampilin tooltip menjadi lebih terang
@@ -172,9 +192,9 @@ tpt_by_region = period_tpt.set_index("Kabupaten_Kota")["TPT"].to_dict()
 # kartu peta di kolom kiri
 with map_column:
     with st.container(key="kartu_peta"):
-        colored_geojson = prepare_map_regions(tpt_by_region, quartiles)
+        map_file_url = save_map_file(selected_period, tpt_by_region, quartiles)
         st.pydeck_chart(
-            build_map(colored_geojson),
+            build_map(map_file_url),
             height="stretch",  # peta mengisi sisa tinggi kartu, sehingga sama tinggi dengan kolom kanan
         )
 

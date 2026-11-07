@@ -7,3 +7,7 @@ textColor = "#2B2B2B"
 
 [client]
 toolbarMode = "minimal"
+
+[server]
+# file di folder static/ bisa diunduh langsung oleh browser (dipakai peta)
+enableStaticServing = true
