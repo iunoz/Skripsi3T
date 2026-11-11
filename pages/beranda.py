@@ -10,7 +10,7 @@ Kondisi ketenagakerjaan di Indonesia umumnya dipantau melalui Tingkat Penganggur
 (TPT). Secara nasional TPT terus membaik, tetapi penurunannya tidak merata di seluruh
 kabupaten/kota, terutama di daerah tertinggal, terdepan, dan terluar (3T) yang memiliki
 dinamika ketenagakerjaan berbeda. Aplikasi ini memodelkan TPT 127 kabupaten/kota 3T periode
-2021 - 2025 dengan Regresi LASSO berbasis algoritma LARS, untuk menemukan indikator yang
+2022 - 2025 dengan Regresi LASSO berbasis algoritma LARS, untuk menemukan indikator yang
 paling berpengaruh sekaligus menyediakan simulasi prediksi TPT.
 """
 
@@ -104,7 +104,7 @@ st.space("large")
 
 chart_column, overview_column = st.columns(2, vertical_alignment="center", gap="large")
 with chart_column, st.container(key="kartu_grafik_tpt"):
-    st.markdown("##### Rata-rata TPT Daerah 3T, 2021 - 2025", anchors=False, text_alignment="center")
+    st.markdown("##### Rata-rata TPT Daerah 3T, 2022 - 2025", anchors=False, text_alignment="center")
     show_tpt_area_chart(average_tpt)
 with overview_column, st.container(key="gambaran"):
     st.markdown("### Gambaran Umum TPT", anchors=False , text_alignment="right")
