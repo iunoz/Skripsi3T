@@ -99,6 +99,14 @@ VARIABLE_SETTINGS = {
     },
 }
 
+CONTRIBUTION_EXPLANATION = """
+Kontribusi menunjukkan seberapa besar sebuah variabel menggeser TPT prediksi dibandingkan rata-rata 
+kabupaten/kota 3T.
+
+:red[**Merah (+)**] berarti variabel tersebut menaikkan TPT, sedangkan :green[**hijau (-)**] berarti
+variabel tersebut menurunkan TPT.
+"""
+
 
 @st.cache_data  # file cukup dibaca sekali, tidak setiap kali halaman dimuat ulang
 def load_model():
@@ -253,7 +261,7 @@ if predicted_tpt < 0:
 with result_column:
     # kartu hasil prediksi
     with st.container(key="kartu_hasil_prediksi"):
-        st.markdown("**TPT HASIL PREDIKSI**", text_alignment="center")
+        st.markdown("**TPT PREDIKSI**", text_alignment="center")
         prediction_text = replace_dot_with_comma(f"{predicted_tpt:.2f}")
         st.markdown("# " + prediction_text + "%", text_alignment="center", anchors=False)
 
@@ -278,4 +286,8 @@ with result_column:
                     st.markdown(":green[**" + value_text + "**]", text_alignment="right")
                 else:
                     st.markdown("**" + value_text + "**", text_alignment="right")
+
+        # penjelasan arti kontribusi
+        st.divider()
+        st.caption(CONTRIBUTION_EXPLANATION, text_alignment="justify")
 

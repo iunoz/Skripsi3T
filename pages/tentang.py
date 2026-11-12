@@ -131,7 +131,7 @@ ANSWER_VARIABLES = """
 
 DATA_SOURCE_TEXT = """
 Data yang digunakan adalah data sekunder berbentuk data panel 127 kabupaten/kota di daerah 3T
-selama lima periode (2022 - 2025).  
+selama lima periode (2022 - 2025) yang didapat dari BPS.  
 
 Penentuan kabupaten/kota yang termasuk daerah 3T mengacu pada ketetapan pemerintah berikut:
 - **Tertinggal:** Peraturan Presiden Nomor 63 Tahun 2020 tentang Penetapan Daerah Tertinggal
@@ -296,9 +296,57 @@ if selected_section == "Daerah 3T & Sumber Data":
     # kartu tabel daftar kabupaten/kota 3T
     with st.container(key="kartu_daftar_3t"):
         st.markdown("#### Daftar Kabupaten/Kota Daerah 3T", anchors=False)
+
+        # filter provinsi dan kategori 3T
+        province_column, category_column = st.columns(2)
+
+        with province_column:
+            province_options = sorted(list_3t["Provinsi"].unique())
+            # hanya satu provinsi yang bisa dipilih; kosong berarti semua provinsi
+            selected_province = st.selectbox(
+                "Provinsi",
+                options=province_options,
+                index=None,
+                placeholder="Semua provinsi",
+            )
+
+        with category_column:
+            selected_categories = st.multiselect(
+                "Kategori 3T",
+                options=["Tertinggal", "Terdepan", "Terluar"],
+                placeholder="Semua kategori",
+            )
+
+        # saring tabel sesuai filter (filter kosong berarti semua data ditampilkan)
+        filtered_3t = list_3t.copy()
+
+        if selected_province is not None:
+            filtered_3t = filtered_3t[filtered_3t["Provinsi"] == selected_province]
+
+        if selected_categories:
+            # daerah ditampilkan hanya bila memiliki SEMUA kategori yang dipilih
+            keep_rows = []
+            for categories in filtered_3t["Kategori_3T"]:
+                has_all_categories = True
+                for category in selected_categories:
+                    if category not in categories:
+                        has_all_categories = False
+                keep_rows.append(has_all_categories)
+            filtered_3t = filtered_3t[keep_rows]
+
+        # nomor urut diulang dari 1 sesuai hasil filter
+        filtered_3t["No"] = range(1, len(filtered_3t) + 1)
+
+        # jumlah daerah hasil filter
+        filtered_count = str(len(filtered_3t))
+        total_count = str(len(list_3t))
+        st.markdown(
+            "**Jumlah kabupaten/kota:** " + filtered_count + " dari " + total_count
+        )
+
         st.dataframe(
-            list_3t,
-            column_order=["No", "Kabupaten_Kota", "Provinsi", "Kategori_3T"], 
+            filtered_3t,
+            column_order=["No", "Kabupaten_Kota", "Provinsi", "Kategori_3T"],
             column_config={
                 "No": st.column_config.NumberColumn("No", width="small"),
                 "Kabupaten_Kota": st.column_config.TextColumn("Kabupaten/Kota"),
@@ -310,7 +358,7 @@ if selected_section == "Daerah 3T & Sumber Data":
                 ),
             },
             hide_index=True,  # sembunyikan indeks bawaan pandas (sudah ada kolom No)
-            height=420,      
+            height=420,
         )
 
     st.space("medium")

@@ -1,5 +1,6 @@
 import json
 import os
+import numpy as np
 import pandas as pd
 import pydeck as pdk
 import streamlit as st
@@ -14,6 +15,24 @@ COLOR_HIGH = [217, 72, 59]
 COLOR_NON_3T = [217, 210, 197]
 
 PERIOD_LIST = [2022, 2023, 2024, 2025]
+
+# warna sorotan kolom periode terpilih di jendela detail wilayah
+COLOR_SELECTED_PERIOD = "#EADBC8"
+
+# variabel yang ditampilkan di jendela detail wilayah
+# kolom berawalan log_ dikembalikan ke satuan asli dengan exp() sebelum ditampilkan
+DETAIL_VARIABLES = [
+    {"column": "TPT", "label": "Tingkat Pengangguran Terbuka", "unit": "%", "decimals": 2},
+    {"column": "RLS", "label": "Rata-rata Lama Sekolah", "unit": "tahun", "decimals": 2},
+    {"column": "HLS", "label": "Harapan Lama Sekolah", "unit": "tahun", "decimals": 2},
+    {"column": "log_PDRB_Kapita", "label": "PDRB per Kapita", "unit": "ribu rupiah", "decimals": 0},
+    {"column": "UMK", "label": "Upah Minimum Kabupaten/Kota", "unit": "rupiah", "decimals": 0},
+    {"column": "Pengeluaran_Kapita", "label": "Pengeluaran per Kapita Disesuaikan", "unit": "ribu rupiah/tahun", "decimals": 0},
+    {"column": "TPAK", "label": "Tingkat Partisipasi Angkatan Kerja", "unit": "%", "decimals": 2},
+    {"column": "log_Kepadatan_Penduduk", "label": "Kepadatan Penduduk", "unit": "jiwa/km²", "decimals": 0},
+    {"column": "log_Jumlah_Penduduk", "label": "Jumlah Penduduk", "unit": "jiwa", "decimals": 0},
+    {"column": "log_Penduduk_Miskin", "label": "Jumlah Penduduk Miskin", "unit": "ribu jiwa", "decimals": 2},
+]
 
 
 # teks peta
@@ -89,6 +108,7 @@ def prepare_map_regions(tpt_by_region, quartiles):
             "geometry": region["geometry"],
             "properties": {
                 "name": properties["nama"],
+                "dataset_name": properties["nama_dataset"],  # nama di data TPT, dipakai jendela detail
                 "province": properties["provinsi"],
                 "description": description,
                 "color": color,
@@ -104,7 +124,8 @@ def save_map_file(selected_period, tpt_by_region, quartiles):
     # peta berwarna disimpan ke folder static/ agar browser mengunduhnya sendiri,
     # tidak dikirim ulang dari python setiap kali halaman dijalankan
     colored_geojson = prepare_map_regions(tpt_by_region, quartiles)
-    file_name = "peta_tpt_" + str(selected_period) + ".json"
+    # akhiran _v2 agar browser tidak memakai file lama yang belum berisi dataset_name
+    file_name = "peta_tpt_" + str(selected_period) + "_v2.json"
 
     os.makedirs(STATIC_FOLDER, exist_ok=True)
     with open(STATIC_FOLDER + "/" + file_name, "w", encoding="utf-8") as file:
@@ -121,6 +142,7 @@ def save_map_file(selected_period, tpt_by_region, quartiles):
 def build_map(map_file_url):
     region_layer = pdk.Layer(
         "GeoJsonLayer",
+        id="wilayah",                       # nama layer, dipakai untuk membaca wilayah yang diklik
         data=map_file_url,                  # browser mengunduh file peta dari alamat ini
         get_fill_color="properties.color",
         get_line_color=[255, 255, 255],     # garis batas wilayah
@@ -142,6 +164,65 @@ def build_map(map_file_url):
         map_style=None,  # tanpa peta dasar, hanya batas wilayah
         tooltip={"html": TOOLTIP_TEXT},
     )
+
+
+def format_number(value, decimals):
+    # format angka Indonesia: titik untuk ribuan, koma untuk desimal (misal 3.166.460 atau 8,28)
+    text = f"{value:,.{decimals}f}"
+    text = text.replace(",", "#").replace(".", ",").replace("#", ".")
+    return text
+
+
+def build_detail_table(region_data):
+    # tabel detail: baris = variabel, kolom = periode
+    rows = []
+    for variable in DETAIL_VARIABLES:
+        row = {"Variabel": variable["label"], "Satuan": variable["unit"]}
+
+        for period in PERIOD_LIST:
+            period_row = region_data[region_data["Periode"] == period]
+            if len(period_row) == 0:
+                row[str(period)] = "-"
+                continue
+
+            value = period_row[variable["column"]].iloc[0]
+            if variable["column"].startswith("log_"):
+                value = np.exp(value)  # kembalikan ke satuan asli
+            row[str(period)] = format_number(value, variable["decimals"])
+
+        rows.append(row)
+
+    return pd.DataFrame(rows)
+
+
+@st.dialog("Detail Kabupaten/Kota", width="large")
+def show_region_detail(region_properties, selected_period):
+    st.markdown("### " + region_properties["name"], anchors=False)
+    st.caption(region_properties["province"])
+
+    dataset_name = region_properties.get("dataset_name")
+    if not dataset_name:
+        st.info("Wilayah ini bukan daerah 3T, sehingga tidak termasuk data penelitian.")
+        return
+
+    region_data = tpt_data[tpt_data["Kabupaten_Kota"] == dataset_name]
+    detail_table = build_detail_table(region_data)
+
+    # sorot kolom periode yang sedang dipilih di peta
+    selected_column = str(selected_period)
+    styled_table = detail_table.style.set_properties(
+        subset=[selected_column],
+        **{"background-color": COLOR_SELECTED_PERIOD, "font-weight": "bold"},
+    )
+
+    st.dataframe(
+        styled_table,
+        hide_index=True,
+        column_config={
+            selected_column: st.column_config.TextColumn(selected_column + " (dipilih)"),
+        },
+    )
+    st.caption("Kolom berwarna adalah periode yang sedang dipilih di peta.")
 
 
 def show_tpt_list(five_rows_table):
@@ -193,10 +274,25 @@ tpt_by_region = period_tpt.set_index("Kabupaten_Kota")["TPT"].to_dict()
 with map_column:
     with st.container(key="kartu_peta"):
         map_file_url = save_map_file(selected_period, tpt_by_region, quartiles)
-        st.pydeck_chart(
+        map_event = st.pydeck_chart(
             build_map(map_file_url),
             height="stretch",  # peta mengisi sisa tinggi kartu, sehingga sama tinggi dengan kolom kanan
+            on_select="rerun",               # halaman dimuat ulang saat wilayah diklik
+            selection_mode="single-object",  # hanya satu wilayah yang bisa dipilih
+            key="peta_tpt",
         )
+
+        # buka jendela detail saat wilayah diklik
+        clicked_regions = map_event.selection.objects.get("wilayah", [])
+        if clicked_regions:
+            clicked_properties = clicked_regions[0]["properties"]
+            # jendela hanya dibuka sekali per klik, tidak setiap kali halaman dimuat ulang
+            # (misalnya saat periode diganti, jendela tidak muncul lagi)
+            if st.session_state.get("wilayah_terakhir") != clicked_properties["name"]:
+                st.session_state["wilayah_terakhir"] = clicked_properties["name"]
+                show_region_detail(clicked_properties, selected_period)
+        else:
+            st.session_state["wilayah_terakhir"] = None
 
         # keterangan warna di bawah peta
         with st.container(key="legenda_peta", horizontal=True, gap="large"):
