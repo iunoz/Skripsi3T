@@ -99,6 +99,35 @@ VARIABLE_SETTINGS = {
     },
 }
 
+# luas wilayah bukan variabel model, hanya dipakai untuk menghitung kepadatan penduduk
+# rentang diambil dari data: jumlah penduduk ÷ kepadatan (±122 km² Kota Sabang sampai ±48.300 km² Merauke)
+AREA_SETTINGS = {
+    "label": "Luas Wilayah",
+    "unit": "km²",
+    "min": 100,
+    "max": 50000,
+    "step": 1,
+    "default": 3193,  # bersama jumlah penduduk awal (182 ribu jiwa) menghasilkan kepadatan ±57 jiwa/km²
+    "format": "%d",
+}
+
+# batas kepadatan penduduk pada data yang dipelajari model
+DENSITY_DATA_MIN = 1
+DENSITY_DATA_MAX = 1490
+
+DENSITY_QUESTION = "Apakah Anda memiliki data kepadatan penduduk?"
+
+AREA_DISCLAIMER = """
+Luas wilayah **bukan variabel model** dan tidak dipelajari oleh LASSO. Luas wilayah hanya dipakai
+untuk menghitung kepadatan penduduk = jumlah penduduk ÷ luas wilayah. Nilai kepadatan inilah yang
+dimasukkan ke model.
+"""
+
+DENSITY_OUT_OF_RANGE_WARNING = """
+Kepadatan hasil hitung berada di luar rentang data yang dipelajari model (1 - 1.490 jiwa/km²),
+sehingga hasil prediksi kurang dapat diandalkan.
+"""
+
 CONTRIBUTION_EXPLANATION = """
 Kontribusi menunjukkan seberapa besar sebuah variabel menggeser TPT prediksi dibandingkan rata-rata 
 kabupaten/kota 3T.
@@ -141,23 +170,33 @@ def to_model_scale(variable_name, display_value):
     return value
 
 
-def show_variable_input(number, variable_name):
-    settings = VARIABLE_SETTINGS[variable_name]
-    slider_key = "slider_" + variable_name
-    box_key = "kotak_" + variable_name
+def show_label(number, settings):
+    # nama variabel di baris atas, satuan abu-abu kecil tepat di bawahnya
+    with st.container(gap=None):  # tanpa jarak antara nama dan satuan
+        if number is None:
+            st.markdown("**" + settings["label"] + "**")
+        else:
+            st.markdown(":gray-badge[" + str(number) + "] **" + settings["label"] + "**")
+        st.caption(settings["unit"])
+
+
+def show_input_row(number, settings, input_name):
+    # satu isian lengkap: nama dan satuan, kotak angka, lalu slider di bawahnya
+    slider_key = "slider_" + input_name
+    box_key = "kotak_" + input_name
 
     # isi nilai awal hanya saat halaman pertama kali dibuka
     if slider_key not in st.session_state:
         st.session_state[slider_key] = settings["default"]
         st.session_state[box_key] = settings["default"]
 
-    name_column, box_column, unit_column = st.columns(
-        [5, 3, 2],
+    name_column, box_column = st.columns(
+        [7, 3],
         vertical_alignment="center",
     )
 
     with name_column:
-        st.markdown(":gray-badge[" + str(number) + "] **" + settings["label"] + "**")
+        show_label(number, settings)
 
     with box_column:
         st.number_input(
@@ -168,12 +207,9 @@ def show_variable_input(number, variable_name):
             format=settings["format"],
             key=box_key,
             on_change=copy_from_box,   # samakan slider setelah kotak diisi
-            args=[variable_name],
+            args=[input_name],
             label_visibility="collapsed",
         )
-
-    with unit_column:
-        st.caption(settings["unit"])
 
     # slider di bawahnya
     st.slider(
@@ -184,11 +220,87 @@ def show_variable_input(number, variable_name):
         format=settings["format"],
         key=slider_key,
         on_change=copy_from_slider,  # samakan kotak angka setelah slider digeser
-        args=[variable_name],
+        args=[input_name],
         label_visibility="collapsed",
     )
 
     return st.session_state[slider_key]
+
+
+def show_variable_input(number, variable_name):
+    return show_input_row(number, VARIABLE_SETTINGS[variable_name], variable_name)
+
+
+def show_density_input(number):
+    density_settings = VARIABLE_SETTINGS["log_Kepadatan_Penduduk"]
+    population_settings = VARIABLE_SETTINGS["log_Jumlah_Penduduk"]
+
+    # pertanyaan apakah pengguna punya data kepadatan penduduk
+    has_density_data = st.radio(
+        DENSITY_QUESTION,
+        options=["Ya", "Tidak"],
+        horizontal=True,              # pilihan Ya dan Tidak dalam satu baris
+        key="punya_data_kepadatan",
+    )
+
+    left_column, right_column = st.columns(2, gap="large")
+
+    # punya data kepadatan: isi kepadatan langsung seperti variabel lain
+    if has_density_data == "Ya":
+        with left_column:
+            density_value = show_variable_input(number, "log_Kepadatan_Penduduk")
+        with right_column:
+            st.caption("Pilih **Tidak** jika Anda hanya memiliki data luas wilayah.")
+        return density_value
+
+    # tidak punya data kepadatan: kepadatan dihitung dari jumlah penduduk dan luas wilayah
+
+    # isi nilai awal luas wilayah hanya saat pertama kali dipakai
+    if "slider_Luas_Wilayah" not in st.session_state:
+        st.session_state["slider_Luas_Wilayah"] = AREA_SETTINGS["default"]
+        st.session_state["kotak_Luas_Wilayah"] = AREA_SETTINGS["default"]
+
+    # jumlah penduduk diambil dari isian variabel jumlah penduduk (dalam ribu jiwa)
+    if "slider_log_Jumlah_Penduduk" not in st.session_state:
+        st.session_state["slider_log_Jumlah_Penduduk"] = population_settings["default"]
+        st.session_state["kotak_log_Jumlah_Penduduk"] = population_settings["default"]
+    population_value = st.session_state["slider_log_Jumlah_Penduduk"] * population_settings["multiplier"]
+
+    area_value = st.session_state["slider_Luas_Wilayah"]
+    density_value = population_value / area_value
+
+    # kolom kiri: hasil hitung kepadatan dalam kotak abu-abu yang tidak bisa diisi
+    with left_column:
+        name_column, box_column = st.columns(
+            [7, 3],
+            vertical_alignment="center",
+        )
+        with name_column:
+            show_label(number, density_settings)
+        with box_column:
+            # nilai kotak diisi lewat session_state karena kotak ini punya key
+            st.session_state["kotak_kepadatan_hitung"] = round(density_value, 1)
+            st.number_input(
+                density_settings["label"],
+                format="%.1f",
+                disabled=True,  # hanya menampilkan hasil hitung, tidak bisa diubah
+                key="kotak_kepadatan_hitung",
+                label_visibility="collapsed",
+            )
+        st.caption("Dihitung otomatis: jumlah penduduk ÷ luas wilayah")
+
+    # kolom kanan: isian luas wilayah (tanpa nomor karena bukan variabel model)
+    with right_column:
+        show_input_row(None, AREA_SETTINGS, "Luas_Wilayah")
+
+    # disclaimer bahwa luas wilayah bukan variabel model
+    st.info(AREA_DISCLAIMER)
+
+    # peringatan bila kepadatan hasil hitung di luar rentang data latih
+    if density_value < DENSITY_DATA_MIN or density_value > DENSITY_DATA_MAX:
+        st.warning(DENSITY_OUT_OF_RANGE_WARNING)
+
+    return density_value
 
 
 
@@ -219,10 +331,16 @@ with input_column:
             anchors=False,
         )
 
+        # kepadatan penduduk dipisah karena bloknya lebih tinggi (ada pertanyaan dan luas wilayah)
+        paired_variables = []
+        for variable_name in selected_variables:
+            if variable_name != "log_Kepadatan_Penduduk":
+                paired_variables.append(variable_name)
+
         # setiap baris berisi dua variabel: nomor ganjil di kiri, nomor genap di kanan
         input_values = {}
         number = 0
-        for variable_name in selected_variables:
+        for variable_name in paired_variables:
             number = number + 1
 
             if number % 2 == 1:
@@ -234,6 +352,12 @@ with input_column:
             with target_column:
                 with st.container(key="blok_" + variable_name):
                     input_values[variable_name] = show_variable_input(number, variable_name)
+
+        # baris terakhir selebar kartu: kepadatan penduduk, diisi langsung atau dihitung dari luas wilayah
+        if "log_Kepadatan_Penduduk" in selected_variables:
+            number = number + 1
+            with st.container(key="blok_log_Kepadatan_Penduduk"):
+                input_values["log_Kepadatan_Penduduk"] = show_density_input(number)
 
         # daftar variabel yang tidak lolos seleksi
         with st.container(key="bagian_tereliminasi", horizontal=True, vertical_alignment="center"):

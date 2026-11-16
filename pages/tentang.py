@@ -103,9 +103,10 @@ jalur solusi LASSO secara efisien, sehingga pemilihan lambda terbaik lebih mudah
 
 ANSWER_INDICATORS = """
 - **Pendidikan:** Rata-rata Lama Sekolah (RLS) dan Harapan Lama Sekolah (HLS)
-- **Ekonomi dan ketenagakerjaan:** PDRB per kapita, Upah Minimum Kabupaten/Kota (UMK),
-  pengeluaran per kapita disesuaikan, dan Tingkat Partisipasi Angkatan Kerja (TPAK)
-- **Kependudukan:** kepadatan penduduk, jumlah penduduk, dan jumlah penduduk miskin
+- **Ekonomi:** PDRB per kapita, Upah Minimum Kabupaten/Kota (UMK), dan pengeluaran
+  per kapita disesuaikan
+- **Sosial:** Tingkat Partisipasi Angkatan Kerja (TPAK), kepadatan penduduk, jumlah
+  penduduk, dan jumlah penduduk miskin
 """
 
 ANSWER_3T = """
@@ -126,6 +127,36 @@ ANSWER_VARIABLES = """
 - **Variabel dependen (Y):** Tingkat Pengangguran Terbuka (TPT) dalam persen
 - **Variabel independen (X):** sembilan variabel dari indikator sosial, ekonomi,
   dan pendidikan (lihat jawaban dari pertanyaan *Apa saja indikator yang digunakan?*)
+"""
+
+ANSWER_EDUCATION_VARIABLES = """
+- **Rata-rata Lama Sekolah (RLS):** rata-rata jumlah tahun yang telah dihabiskan penduduk
+  usia 25 tahun ke atas untuk menempuh pendidikan formal. Satuannya tahun.
+- **Harapan Lama Sekolah (HLS):** lamanya sekolah yang diharapkan akan dirasakan oleh anak
+  usia 7 tahun di masa mendatang, jika pola partisipasi sekolah saat ini tetap sama.
+  Satuannya tahun.
+"""
+
+ANSWER_ECONOMY_VARIABLES = """
+- **PDRB per Kapita:** Produk Domestik Regional Bruto dibagi jumlah penduduk. Angka ini
+  menggambarkan rata-rata nilai tambah ekonomi yang dihasilkan setiap penduduk.
+  Satuannya ribu rupiah.
+- **Upah Minimum Kabupaten/Kota (UMK):** upah bulanan terendah yang ditetapkan pemerintah
+  sebagai batas bawah gaji pekerja di suatu kabupaten/kota. Satuannya rupiah.
+- **Pengeluaran per Kapita Disesuaikan:** rata-rata pengeluaran setiap penduduk dalam
+  setahun yang sudah disesuaikan dengan tingkat harga, sehingga menggambarkan daya beli
+  masyarakat. Satuannya ribu rupiah per tahun.
+"""
+
+ANSWER_SOCIAL_VARIABLES = """
+- **Tingkat Partisipasi Angkatan Kerja (TPAK):** persentase angkatan kerja (penduduk yang
+  bekerja dan yang sedang mencari kerja) terhadap seluruh penduduk usia 15 tahun ke atas.
+  Satuannya persen.
+- **Kepadatan Penduduk:** jumlah penduduk dibagi luas wilayah. Satuannya jiwa per km².
+- **Jumlah Penduduk:** banyaknya penduduk yang tinggal di kabupaten/kota tersebut.
+  Satuannya jiwa.
+- **Jumlah Penduduk Miskin:** banyaknya penduduk yang rata-rata pengeluaran per bulannya
+  berada di bawah garis kemiskinan. Satuannya ribu jiwa.
 """
 
 
@@ -287,6 +318,18 @@ if selected_section == "Model & FAQ":
         with column_3:
             with st.expander("Variabel apa saja yang digunakan?"):
                 st.markdown(ANSWER_VARIABLES)
+
+        # baris ketiga: arti setiap variabel prediktor
+        column_1, column_2, column_3 = st.columns(3)
+        with column_1:
+            with st.expander("Apa arti variabel pendidikan?"):
+                st.markdown(ANSWER_EDUCATION_VARIABLES)
+        with column_2:
+            with st.expander("Apa arti variabel ekonomi?"):
+                st.markdown(ANSWER_ECONOMY_VARIABLES)
+        with column_3:
+            with st.expander("Apa arti variabel sosial?"):
+                st.markdown(ANSWER_SOCIAL_VARIABLES)
 
 
 if selected_section == "Daerah 3T & Sumber Data":

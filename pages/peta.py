@@ -1,4 +1,5 @@
 import json
+import math
 import os
 import numpy as np
 import pandas as pd
@@ -42,6 +43,37 @@ TOOLTIP_TEXT = """
 {description}
 """
 
+# penjelasan cara menentukan kategori warna (subbab 2.2.6.3 proposal)
+# tanda {...} diisi angka hasil perhitungan di bagian bawah halaman
+CATEGORY_EXPLANATION = """
+Kategori TPT ditentukan dari **kuartil seluruh data TPT kabupaten/kota 3T periode 2022–2025**
+(n = {data_count} data). Batas yang sama dipakai untuk semua periode, sehingga warna antarperiode
+dapat dibandingkan.
+
+**Langkah perhitungan**
+
+1. Seluruh data TPT diurutkan dari nilai terkecil hingga terbesar.
+2. Letak kuartil dihitung dengan Persamaan 2.9, yaitu Letak Qᵢ = i × (n + 1) / 4.
+3. Jika letak bukan bilangan bulat, nilai kuartil dihitung dengan interpolasi linear (Persamaan 2.10),
+   yaitu Qᵢ = x bawah + (letak − urutan bawah) × (x atas − x bawah).
+
+**Kuartil pertama (Q1)**
+
+- Letak Q1 = 1 × ({data_count} + 1) / 4 = {q1_position}, berada di antara data ke-{q1_lower_rank} ({q1_lower_value}%) dan ke-{q1_upper_rank} ({q1_upper_value}%)
+- Q1 = {q1_lower_value} + {q1_fraction} × ({q1_upper_value} − {q1_lower_value}) = **{q1_value}%**
+
+**Kuartil ketiga (Q3)**
+
+- Letak Q3 = 3 × ({data_count} + 1) / 4 = {q3_position}, berada di antara data ke-{q3_lower_rank} ({q3_lower_value}%) dan ke-{q3_upper_rank} ({q3_upper_value}%)
+- Q3 = {q3_lower_value} + {q3_fraction} × ({q3_upper_value} − {q3_lower_value}) = **{q3_value}%**
+
+**Aturan kategori**
+
+- Rendah jika TPT < Q1
+- Sedang jika Q1 ≤ TPT ≤ Q3
+- Tinggi jika TPT > Q3
+"""
+
 
 @st.cache_data  # file cukup dibaca sekali, tidak setiap kali halaman dimuat ulang
 def load_tpt_data():
@@ -60,12 +92,48 @@ def format_percent(value):
     return text + "%"
 
 
+def compute_quartile(sorted_tpt, quartile_number):
+    # letak kuartil (persamaan 2.9)
+    position = quartile_number * (len(sorted_tpt) + 1) / 4
+
+    # urutan data yang mengapit letak kuartil
+    lower_rank = math.floor(position)
+    upper_rank = math.ceil(position)
+
+    # urutan data dimulai dari 1, sedangkan indeks list python dimulai dari 0
+    lower_value = sorted_tpt[lower_rank - 1]
+    upper_value = sorted_tpt[upper_rank - 1]
+
+    # nilai kuartil dengan interpolasi linear (persamaan 2.10)
+    # jika letaknya bilangan bulat, fraction = 0 sehingga nilai kuartil = lower_value
+    fraction = position - lower_rank
+    value = lower_value + fraction * (upper_value - lower_value)
+
+    # semua angka disimpan agar bisa ditampilkan di penjelasan kategori
+    return {
+        "position": position,
+        "lower_rank": lower_rank,
+        "upper_rank": upper_rank,
+        "lower_value": lower_value,
+        "upper_value": upper_value,
+        "fraction": fraction,
+        "value": value,
+    }
+
+
 @st.cache_data  # kuartil cukup dihitung sekali
 def compute_quartiles(tpt_data):
-    # q1 dan q3 dihitung dari seluruh data TPT 2022–2025,
+    # q1 dan q3 dihitung dari seluruh data TPT 2022–2025
+    sorted_tpt = sorted(tpt_data["TPT"])
+    q1_detail = compute_quartile(sorted_tpt, 1)
+    q3_detail = compute_quartile(sorted_tpt, 3)
+
     quartiles = {
-        "q1": tpt_data["TPT"].quantile(0.25),
-        "q3": tpt_data["TPT"].quantile(0.75),
+        "data_count": len(sorted_tpt),
+        "q1": q1_detail["value"],
+        "q3": q3_detail["value"],
+        "q1_detail": q1_detail,
+        "q3_detail": q3_detail,
     }
     return quartiles
 
@@ -244,11 +312,33 @@ tpt_data = load_tpt_data()
 quartiles = compute_quartiles(tpt_data)
 
 # teks keterangan warna
-q1_text = format_percent(quartiles["q1"])
-q3_text = format_percent(quartiles["q3"])
+# tiga angka desimal agar sama dengan nilai di penjelasan kategori (misalnya 4,805%)
+q1_text = format_number(quartiles["q1"], 3) + "%"
+q3_text = format_number(quartiles["q3"], 3) + "%"
 low_label = "Rendah (< " + q1_text + ")"
 medium_label = "Sedang (" + q1_text + " - " + q3_text + ")"
 high_label = "Tinggi (> " + q3_text + ")"
+
+# teks penjelasan kategori, diisi angka hasil perhitungan kuartil
+q1_detail = quartiles["q1_detail"]
+q3_detail = quartiles["q3_detail"]
+category_text = CATEGORY_EXPLANATION.format(
+    data_count=quartiles["data_count"],
+    q1_position=format_number(q1_detail["position"], 2),
+    q1_lower_rank=q1_detail["lower_rank"],
+    q1_upper_rank=q1_detail["upper_rank"],
+    q1_lower_value=format_number(q1_detail["lower_value"], 2),
+    q1_upper_value=format_number(q1_detail["upper_value"], 2),
+    q1_fraction=format_number(q1_detail["fraction"], 2),
+    q1_value=format_number(q1_detail["value"], 3),
+    q3_position=format_number(q3_detail["position"], 2),
+    q3_lower_rank=q3_detail["lower_rank"],
+    q3_upper_rank=q3_detail["upper_rank"],
+    q3_lower_value=format_number(q3_detail["lower_value"], 2),
+    q3_upper_value=format_number(q3_detail["upper_value"], 2),
+    q3_fraction=format_number(q3_detail["fraction"], 2),
+    q3_value=format_number(q3_detail["value"], 3),
+)
 
 # judul halaman
 st.markdown("# Peta TPT Kabupaten/Kota 3T", text_alignment="center", anchors=False)
@@ -305,6 +395,14 @@ with map_column:
                 st.markdown(high_label)
             with st.container(key="legenda_bukan_3t", width="content"):
                 st.markdown("Bukan Daerah 3T")
+
+        # penjelasan asal kategori warna, terbuka saat diklik
+        with st.expander(
+            "Dari mana kategori ini didapat?",
+            icon=":material/info:",
+            key="penjelasan_kategori",
+        ):
+            st.markdown(category_text)
 
 # kartu lima TPT tertinggi dan terendah di kolom kanan
 with info_column:
